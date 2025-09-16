@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Scraper Médico</title>
 </head>
 <body>
   <h1>Scraper Médico</h1>
