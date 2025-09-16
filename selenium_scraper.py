@@ -11,8 +11,8 @@ import phonenumbers
 
 INPUT_NAMES = 'names.csv'   # headers: name,city
 OUTPUT_CSV = 'output_from_bing_headless.csv'
-WAIT_BETWEEN_SEARCHES = (1, 3)  # intervalo pequeno, randomizado
-MAX_RESULTS_TO_VISIT = 3
+WAIT_BETWEEN_SEARCHES = (1, 3)
+MAX_RESULTS_TO_VISIT = 4  # agora 4
 
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 
@@ -39,16 +39,16 @@ def extract_from_html(html):
         href = a['href']
         m = WA_LINK_RE.search(href)
         if m:
-            return normalize_number(m.group(0)), href
+            return normalize_number(m.group(0))
     text = soup.get_text(" ")
     m = PHONE_RE.search(text)
     if m:
-        return normalize_number(m.group(0)), None
-    return None, None
+        return normalize_number(m.group(0))
+    return None
 
 def main():
     options = Options()
-    options.add_argument("--headless")  # roda em background
+    options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument(f"user-agent={USER_AGENT}")
@@ -77,22 +77,24 @@ def main():
 
         results = driver.find_elements(By.CSS_SELECTOR, 'li.b_algo h2 a')[:MAX_RESULTS_TO_VISIT]
         found_num = None
-        found_href = None
+        has_instagram = False
 
         for r in results:
             href = r.get_attribute('href')
+            if "instagram.com" in href:
+                has_instagram = True
+                continue
             try:
                 driver.execute_script("window.open('');")
                 driver.switch_to.window(driver.window_handles[1])
                 driver.get(href)
                 time.sleep(random.uniform(1,3))
                 html = driver.page_source
-                num, link = extract_from_html(html)
+                num = extract_from_html(html)
                 driver.close()
                 driver.switch_to.window(driver.window_handles[0])
                 if num:
                     found_num = num
-                    found_href = link or href
                     break
             except Exception:
                 try:
@@ -102,7 +104,7 @@ def main():
                     pass
                 continue
 
-        out.append({**person, 'extracted_phone': found_num or '', 'found_href': found_href or ''})
+        out.append({**person, 'extracted_phone': found_num or '', 'instagram': has_instagram})
         time.sleep(random.uniform(*WAIT_BETWEEN_SEARCHES))
 
     driver.quit()
