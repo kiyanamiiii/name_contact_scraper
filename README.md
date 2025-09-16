@@ -1,38 +1,65 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-</head>
-<body>
-  <h1>Scraper Médico</h1>
-  <p>Este projeto utiliza Selenium e BeautifulSoup para buscar contatos de médicos no Bing.</p>
+# Scraper Médico
 
-  <h2>Funcionamento</h2>
-  <ol>
-    <li>Lê os nomes e cidades do arquivo <code>names.csv</code>.</li>
-    <li>Executa buscas no Bing com a query: "NOME CIDADE contato telefone consultório".</li>
-    <li>Abre até 4 resultados por busca.</li>
-    <li>Extrai números de telefone encontrados nas páginas.</li>
-    <li>Se algum dos resultados for do Instagram, marca essa informação no CSV.</li>
-    <li>Os dados extraídos são salvos em <code>output_from_bing_headless.csv</code>.</li>
-  </ol>
+Projeto que utiliza Selenium e BeautifulSoup para buscar contatos de médicos no Bing.
 
-  <h2>Estrutura</h2>
-  <ul>
-    <li><code>selenium_scraper.py</code> - Script principal</li>
-    <li><code>names.csv</code> - Lista de entrada com nomes e cidades</li>
-    <li><code>output_from_bing_headless.csv</code> - Saída com telefone e flag de Instagram</li>
-  </ul>
+## Pré-requisitos
 
-  <h2>Requisitos</h2>
-  <ul>
-    <li>Python 3.8 ou superior</li>
-    <li>Bibliotecas: selenium, webdriver-manager, beautifulsoup4, phonenumbers</li>
-  </ul>
+1. **Instalar o [Python 3.11+](https://www.python.org/downloads/)**  
+   Durante a instalação, marque a opção **"Add Python to PATH"**.
+2. **Clonar este repositório**:
+   ```bash
+   git clone https://github.com/seu-repo/scraper-medico.git
+   cd scraper-medico
 
-  <h2>Execução</h2>
-  <pre>
+Instalação das dependências
+
+No Prompt de Comando ou PowerShell, dentro da pasta do projeto, execute:
+
+python -m pip install -r requirements.txt
+
+Se o comando python não funcionar, use:
+
+py -m pip install -r requirements.txt
+
+Estrutura do projeto
+
+    selenium_scraper.py — Script principal que executa o scraper
+
+    names.csv — Lista de entrada com nomes e cidades (colunas: name, city)
+
+    output_from_bing_headless.csv — Saída com telefone e flag de Instagram
+
+    requirements.txt — Dependências do projeto
+
+Execução
+
+Para rodar o scraper:
+
 python selenium_scraper.py
-  </pre>
-</body>
-</html>
+
+ou
+
+py selenium_scraper.py
+
+Funcionamento
+
+    Lê os nomes e cidades do arquivo names.csv.
+
+    Faz buscas no Bing com a query: "NOME CIDADE contato telefone consultório".
+
+    Abre até 4 resultados de cada busca.
+
+    Se algum resultado for do Instagram, marca essa informação no CSV.
+
+    Extrai números de telefone das páginas quando possível.
+
+    Salva os resultados em output_from_bing_headless.csv.
+
+Dependências
+
+O projeto usa as seguintes bibliotecas Python (listadas em requirements.txt):
+
+selenium
+webdriver-manager
+beautifulsoup4
+phonenumbers
