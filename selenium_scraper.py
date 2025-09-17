@@ -33,6 +33,18 @@ def normalize_number(raw):
         return '+' + digits
     return None
 
+def format_brazilian_number(num):
+    """Formata número E164 para +55 (DD) 9XXXX-XXXX"""
+    try:
+        numobj = phonenumbers.parse(num, "BR")
+        if phonenumbers.is_possible_number(numobj):
+            ddd = str(numobj.national_number)[:2]
+            rest = str(numobj.national_number)[2:]
+            return f"+55 ({ddd}) {rest[:5]}-{rest[5:]}"
+    except:
+        pass
+    return num
+
 def extract_from_html(html):
     soup = BeautifulSoup(html, 'html.parser')
     for a in soup.find_all('a', href=True):
@@ -77,13 +89,9 @@ def main():
 
         results = driver.find_elements(By.CSS_SELECTOR, 'li.b_algo h2 a')[:MAX_RESULTS_TO_VISIT]
         found_num = None
-        has_instagram = False
 
         for r in results:
             href = r.get_attribute('href')
-            if "instagram.com" in href:
-                has_instagram = True
-                continue
             try:
                 driver.execute_script("window.open('');")
                 driver.switch_to.window(driver.window_handles[1])
@@ -104,7 +112,8 @@ def main():
                     pass
                 continue
 
-        out.append({**person, 'extracted_phone': found_num or '', 'instagram': has_instagram})
+        formatted = format_brazilian_number(found_num) if found_num else ''
+        out.append({**person, 'extracted_phone': formatted})
         time.sleep(random.uniform(*WAIT_BETWEEN_SEARCHES))
 
     driver.quit()
