@@ -45,7 +45,6 @@ py selenium_scraper.py
 1. Lê nomes e cidades do arquivo `names.csv`.
 2. Realiza buscas no Bing com a query: "NOME CIDADE contato telefone consultório".
 3. Abre até 4 resultados por busca.
-4. Identifica resultados do Instagram e marca no CSV.
-5. Extrai números de telefone das páginas, quando disponíveis.
-6. Salva os resultados em `output_from_bing_headless.csv`.
+4. Extrai números de telefone das páginas, quando disponíveis.
+5. Salva os resultados em `output_from_bing_headless.csv`.
 ```
