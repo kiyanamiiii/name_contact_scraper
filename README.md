@@ -1,9 +1,7 @@
-<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>body{font-family:Inter,Arial,sans-serif;margin:24px;color:#111}h1{font-size:22px}pre{background:#f8f8f8;padding:10px;border-radius:6px}</style>
 </head>
 <body>
   <h1>Scraper WhatsApp — Resumo mínimo</h1>
