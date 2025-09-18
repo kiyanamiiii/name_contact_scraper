@@ -1,4 +1,8 @@
-selenium
-webdriver-manager
+requests
 beautifulsoup4
 phonenumbers
+webdriver-manager
+selenium
+pillow
+pytesseract
+python-dotenv
