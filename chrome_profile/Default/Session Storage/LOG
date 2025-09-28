@@ -1,0 +1,22 @@
+2025/09/27-18:26:30.960 5eac Reusing MANIFEST C:\Users\kiyoshi\Downloads\scraper\chrome_profile\Default\Session Storage/MANIFEST-000001
+2025/09/27-18:26:30.962 5eac Recovering log #3
+2025/09/27-18:26:30.965 5eac Level-0 table #3: started
+2025/09/27-18:26:30.973 5eac Level-0 table #3: 249269 bytes OK
+2025/09/27-18:26:30.979 5eac Delete type=0 #3
+2025/09/27-18:27:39.549 62d8 Level-0 table #6: started
+2025/09/27-18:27:39.560 62d8 Level-0 table #6: 731505 bytes OK
+2025/09/27-18:27:39.563 62d8 Delete type=0 #4
+2025/09/27-18:28:01.778 62d8 Level-0 table #8: started
+2025/09/27-18:28:01.784 62d8 Level-0 table #8: 120328 bytes OK
+2025/09/27-18:28:01.787 62d8 Delete type=0 #5
+2025/09/27-18:28:02.134 62d8 Level-0 table #10: started
+2025/09/27-18:28:02.144 62d8 Level-0 table #10: 850628 bytes OK
+2025/09/27-18:28:02.146 62d8 Delete type=0 #7
+2025/09/27-18:28:02.147 62d8 Compacting 4@0 + 0@1 files
+2025/09/27-18:28:02.167 62d8 Generated table #11@0: 40 keys, 1701187 bytes
+2025/09/27-18:28:02.167 62d8 Compacted 4@0 + 0@1 files => 1701187 bytes
+2025/09/27-18:28:02.167 62d8 compacted to: files[ 0 1 0 0 0 0 0 ]
+2025/09/27-18:28:02.168 62d8 Delete type=2 #3
+2025/09/27-18:28:02.168 62d8 Delete type=2 #6
+2025/09/27-18:28:02.168 62d8 Delete type=2 #8
+2025/09/27-18:28:02.168 62d8 Delete type=2 #10
