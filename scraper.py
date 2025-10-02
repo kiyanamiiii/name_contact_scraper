@@ -15,9 +15,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 # ---------- CONFIG ----------
 INPUT_CSV = 'nomes.csv'
-OUTPUT_CSV = 'resultados.csv'
+OUTPUT_CSV_CONTACTS = 'resultados_contatos.csv'   # nome, cidade, contato
+OUTPUT_CSV_SOURCES = 'resultados_origem.csv'     # nome, link_origem (link de onde pegou o contato)
 MAX_RESULTS = 8
-LOTE = 30
+LOTE = 390
 TIMEOUT = 8
 SRC_USER_DATA = r"C:\Users\kiyoshi\AppData\Local\Google\Chrome\User Data"
 PROFILE_NAME = "Profile 1"
@@ -34,7 +35,7 @@ SNIPPET_DIR = "snippets_debug"
 os.makedirs(SNIPPET_DIR, exist_ok=True)
 
 # regexs
-PHONE_REGEX = re.compile(r'(\+?55[\s\-\.\u00A0]?)?(\(?\d{2}\)?)[\s\-\.\u00A0]?(9?\d{4})[\s\-\.\u00A0]?(\d{4})')
+PHONE_REGEX = re.compile(r'(\+?55[\s\-\.\u00A0]?)?(\(?\d{2}\)?)[\s\-\.\.\u00A0]?(9?\d{4})[\s\-\.\u00A0]?(\d{4})')
 PHONE_GENERIC = re.compile(r'(\+?\d{1,3}[\s\-\.\u00A0]?)?(\(?\d{2,3}\)?)[\s\-\.\u00A0]?\d{4,5}[\s\-\.\u00A0]?\d{4}')
 PHONE_SIMPLE = re.compile(r'\(?\d{2}\)?\s?\d{4,5}[-\s]\d{4}')
 
@@ -79,23 +80,27 @@ def ensure_profile_copy():
 
 def init_driver(user_data_dir, profile_name):
     opts = Options()
-    opts.headless = False
+    opts.headless = False  # mantém renderização normal
     opts.add_argument(f"--user-data-dir={user_data_dir}")
     if profile_name:
         opts.add_argument(f"--profile-directory={profile_name}")
     opts.add_argument("--remote-debugging-port=9222")
-    opts.add_argument("--no-first-run"); opts.add_argument("--no-default-browser-check")
+    opts.add_argument("--no-first-run")
+    opts.add_argument("--no-default-browser-check")
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
     opts.add_experimental_option("useAutomationExtension", False)
+
+    # esta linha minimiza a janela ao iniciar
+    opts.add_argument("--start-minimized")
+
+    drv = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
     try:
-        drv = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
-        try: drv.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {"source":"Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"})
-        except Exception: pass
-        return drv
-    except SessionNotCreatedException as e:
-        logger.error("SessionNotCreatedException: %s", e); raise
-    except WebDriverException as e:
-        logger.error("WebDriverException: %s", e); raise
+        drv.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+            "source": "Object.defineProperty(navigator,'webdriver',{get:()=>undefined})"
+        })
+    except Exception:
+        pass
+    return drv
 
 def human_delay(a=0.8, b=2.0): time.sleep(random.uniform(a, b))
 def only_digits(s): return re.sub(r'\D', '', (s or ''))
@@ -588,11 +593,34 @@ def main():
             except Exception as e:
                 logger.error("Erro processando %s - %s: %s", nome, cidade, e)
                 resultados.append({"nome":nome,"cidade":cidade,"telefone":"Verificar","url_origem":""})
+        # grava dois CSVs conforme pedido
         try:
-            with open(OUTPUT_CSV, 'w', newline='', encoding='utf-8') as f:
-                w = csv.DictWriter(f, fieldnames=['nome','cidade','telefone','url_origem']); w.writeheader(); w.writerows(resultados)
+            # CSV 1: nome, cidade, contato
+            with open(OUTPUT_CSV_CONTACTS, 'w', newline='', encoding='utf-8') as f:
+                fieldnames = ['nome', 'cidade', 'contato']
+                w = csv.DictWriter(f, fieldnames=fieldnames)
+                w.writeheader()
+                for r in resultados:
+                    w.writerow({
+                        'nome': r.get('nome',''),
+                        'cidade': r.get('cidade',''),
+                        'contato': r.get('telefone','')
+                    })
         except Exception as e:
-            logger.error("Erro ao salvar output CSV: %s", e)
+            logger.error("Erro ao salvar CSV de contatos: %s", e)
+        try:
+            # CSV 2: nome, link_origem (link de onde pegou o contato)
+            with open(OUTPUT_CSV_SOURCES, 'w', newline='', encoding='utf-8') as f:
+                fieldnames = ['nome', 'link_origem']
+                w = csv.DictWriter(f, fieldnames=fieldnames)
+                w.writeheader()
+                for r in resultados:
+                    w.writerow({
+                        'nome': r.get('nome',''),
+                        'link_origem': r.get('url_origem','')
+                    })
+        except Exception as e:
+            logger.error("Erro ao salvar CSV de origem: %s", e)
     finally:
         try: drv.quit()
         except Exception: pass
